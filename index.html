@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="_nK">
+    <link rel="icon" href="assets/_con/images/icon.png">
+
+    <title>Chapi Labs Converter</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900' rel='stylesheet' type='text/css'>
+
+    <!-- nanoScroller -->
+    <link rel="stylesheet" type="text/css" href="bower_components/nanoscroller/bin/css/nanoscroller.css" />
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" type="text/css" href="bower_components/fontawesome/css/font-awesome.min.css" />
+
+    <!-- Material Design Icons -->
+    <link rel="stylesheet" type="text/css" href="assets/material-design-icons/css/material-design-icons.min.css" />
+
+    <!-- IonIcons -->
+    <link rel="stylesheet" type="text/css" href="bower_components/ionicons/css/ionicons.min.css" />
+
+    <!-- Drop Zone -->
+    <link rel="stylesheet" type="text/css" href="bower_components/dropzone/dist/min/dropzone.min.css" />
+
+
+    <!-- Main -->
+    <link rel="stylesheet" type="text/css" href="assets/_con/css/con-base.css" />
+
+    <!--[if lt IE 9]>
+        <script src="bower_components/html5shiv/dist/html5shiv.min.js"></script>
+    <![endif]-->
+
+
+</head>
+<body>
+   
+    <!-- Main Content -->
+    <section class="content-wrap">
+
+
+        <!-- Breadcrumb -->
+        <div class="page-title">
+
+            <div class="row">
+                <div class="col s12 m9 l10">
+                    <h1>XLSX Convertidor a DBF</h1>
+                </div>
+            </div>
+
+        </div>
+        <!-- /Breadcrumb -->
+
+        <div class="card-panel">
+            <!-- Drop Zone -->
+            <h4>Subir Archivos</h4>
+            <p>Arrastrar o hacer click para subir un archivo</p>
+
+            <div class="row">
+                <div class="col l5 m12">
+<!--                     <form action="/drop" method="post" class="dropzone" id="dropzone" enctype="multipart/form-data">
+                     
+                    </form> -->
+                    <input type="button" id="upload" value="Convertir uno o más archivos"/>
+                    <p>Para seleccionar más de uno archivo presione la tecla shift</p>
+                </div>
+            </div>
+            <!-- /Drop Zone -->
+        </div>
+
+        </div>
+
+
+    </section>
+    <!-- /Main Content -->
+
+    <!-- /Chat -->
+    <footer>&copy; 2018
+        <strong>Chapi Labs</strong>. All rights reserved.</footer>
+    
+
+    <script>
+        // Or with ECMAScript 6
+        const {dialog} = require('electron').remote;
+        const fs = require('fs');
+        const XLSX = require('xlsx');
+        const dbf = require('dbf');
+        const moment = require('moment');
+        const format = 'YYYY-DD-MM h mm a';
+
+        document.getElementById('upload').addEventListener("click", () => {
+              dialog.showOpenDialog(
+                { 
+                    properties: [ 
+                        'openFile', 'multiSelections'
+                    ],
+                    filters: [
+                        { name: 'XLSX', extensions: ['xlsx', 'xls'] },
+                    ]
+                },
+                
+                (fileNames) => {
+                    if (fileNames === undefined) {
+                        alert('Se ha cancelado la operación');
+                        return;
+                    }
+                    for (let fileName of fileNames) {
+                        var workbook = XLSX.readFile(fileName);
+                        var output = dialog.showSaveDialog({
+                            defaultPath: `${fileName} - ${moment().format(format)}.dbf`
+                        }
+                        );
+                        XLSX.writeFile(workbook, output);
+                    }
+                }
+            );
+        }, false);  
+    </script>
+
+
+
+</body>
+
+</html>
